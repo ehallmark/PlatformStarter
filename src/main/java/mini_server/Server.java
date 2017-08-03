@@ -27,13 +27,16 @@ public class Server {
         System.out.println("    Hour: "+now.getHour());
         if(now.getDayOfWeek().equals(DayOfWeek.SATURDAY)||now.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
             // weekend
+            System.out.println("  Don't run on weekends...");
             return false;
         }
         if(now.getHour() < 8+zoneOffset || now.getHour() > 16+zoneOffset) {
             // non business hours
+            System.out.println("  Outside of business hours...");
             return false;
         }
 
+        System.out.println("  Turn me on!");
         // should be on!
         return true;
     }
