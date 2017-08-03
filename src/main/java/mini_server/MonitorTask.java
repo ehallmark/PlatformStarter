@@ -22,7 +22,7 @@ public class MonitorTask extends TimerTask {
     @Override
     public void run() {
         System.out.println("Monitoring...");
-        boolean turnOn = Server.keepOn.get();
+        boolean turnOn = Server.shouldBeOn();
         if (turnOn) {
             // check if already on
             System.out.println("Checking if already on...");
