@@ -21,8 +21,8 @@ public class Server {
 
 
     public static synchronized boolean shouldBeOn() {
-        int zoneOffset = +2;
-        ZonedDateTime now = ZonedDateTime.now();
+        int zoneOffset = +0;
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of( "America/Los_Angeles" ));
         System.out.println("Current time: "+now.toString());
         if(now.getDayOfWeek().equals(DayOfWeek.SATURDAY)||now.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
             // weekend
