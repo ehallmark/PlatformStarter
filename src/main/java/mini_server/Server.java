@@ -36,7 +36,7 @@ public class Server {
         }
 
         // should be on!
-        return false;
+        return true;
     }
 
 }
