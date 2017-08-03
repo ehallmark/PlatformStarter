@@ -24,6 +24,7 @@ public class Server {
         int zoneOffset = +0;
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of( "America/Los_Angeles" ));
         System.out.println("Current time: "+now.toString());
+        System.out.println("    Hour: "+now.getHour());
         if(now.getDayOfWeek().equals(DayOfWeek.SATURDAY)||now.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
             // weekend
             return false;
