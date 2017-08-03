@@ -21,13 +21,14 @@ public class Server {
 
 
     public static synchronized boolean shouldBeOn() {
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("PST"));
+        int zoneOffset = +2;
+        ZonedDateTime now = ZonedDateTime.now();
         System.out.println("Current time: "+now.toLocalTime().toString());
         if(now.getDayOfWeek().equals(DayOfWeek.SATURDAY)||now.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
             // weekend
             return false;
         }
-        if(now.getHour() < 8 || now.getHour() > 16) {
+        if(now.getHour() < 8+zoneOffset || now.getHour() > 16+zoneOffset) {
             // non business hours
             return false;
         }
