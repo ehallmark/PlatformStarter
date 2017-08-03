@@ -13,7 +13,7 @@ public class Server {
     private static final String DEFAULT_INSTANCE_NAME = "instance-2";
     public static void main(String[] args) {
         Timer timer = new Timer();
-        final long monitorPeriod = 5 * 60 * 1000; // a few minutes
+        final long monitorPeriod = 10 * 60 * 1000; // a few minutes
         // monitor
         MonitorTask monitorTask = new MonitorTask(DEFAULT_URL, DEFAULT_INSTANCE_NAME, DEFAULT_ZONE);
         timer.schedule(monitorTask,0,monitorPeriod);
