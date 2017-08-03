@@ -68,12 +68,19 @@ public class MonitorTask extends TimerTask {
         System.out.println("Stopped...");
     }
 
-    private static boolean ping(String url) {
+    public static boolean ping(String URLName){
         try {
-            return InetAddress.getByName(url).isReachable(60 * 1000);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Inet Address is invalid: "+url);
+            HttpURLConnection.setFollowRedirects(false);
+            // note : you may also need
+            //        HttpURLConnection.setInstanceFollowRedirects(false)
+            HttpURLConnection con =
+                    (HttpURLConnection) new URL(URLName).openConnection();
+            con.setInstanceFollowRedirects(false);
+            con.setRequestMethod("HEAD");
+            return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+        }
+        catch (Exception e) {
+            return false;
         }
     }
 }
