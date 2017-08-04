@@ -30,7 +30,7 @@ public class Server {
             System.out.println("  Don't run on weekends...");
             return false;
         }
-        if(now.getHour() < 8+zoneOffset || now.getHour() > 16+zoneOffset) {
+        if(now.getHour() < 5+zoneOffset || now.getHour() > 16+zoneOffset) {
             // non business hours
             System.out.println("  Outside of business hours...");
             return false;
