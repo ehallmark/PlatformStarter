@@ -8,9 +8,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by ehallmark on 8/1/17.
  */
 public class Server {
-    private static final String DEFAULT_URL = "http://35.184.53.203";
-    private static final String DEFAULT_ZONE = "us-central1-a";
-    private static final String DEFAULT_INSTANCE_NAME = "instance-2";
+    private static final String DEFAULT_URL = "http://35.196.70.117";
+    private static final String DEFAULT_ZONE = "us-east1-c";
+    private static final String DEFAULT_INSTANCE_NAME = "instance-5";
     public static void main(String[] args) {
         Timer timer = new Timer();
         final long monitorPeriod = 10 * 60 * 1000; // a few minutes
@@ -30,7 +30,7 @@ public class Server {
             System.out.println("  Don't run on weekends...");
             return false;
         }
-        if(now.getHour() < 5+zoneOffset || now.getHour() > 16+zoneOffset) {
+        if(now.getHour() < 9+zoneOffset || now.getHour() > 16+zoneOffset) {
             // non business hours
             System.out.println("  Outside of business hours...");
             return false;
