@@ -1,6 +1,6 @@
 package mini_server;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
@@ -27,7 +27,7 @@ public class MonitorTask extends TimerTask {
         if (turnOn) {
             // check if already on
             System.out.println("Checking if already on...");
-            if (!ping(url)) {
+            if (!ping()) {
                 // turn on
                 System.out.println("Not on.");
                 try {
@@ -41,7 +41,7 @@ public class MonitorTask extends TimerTask {
         } else {
             // check if already off
             System.out.println("Checking if already off...");
-            if (ping(url)) {
+            if (ping()) {
                 // turn off
                 System.out.println("Not off.");
                 try {
@@ -56,32 +56,38 @@ public class MonitorTask extends TimerTask {
     }
 
     private void turnOn() throws Exception {
-        Runtime runtime = Runtime.getRuntime();
-        Process process = runtime.exec("gcloud compute instances start "+instanceName+" --zone="+zone);
-        process.waitFor();
+        ProcessBuilder ps = new ProcessBuilder("gcloud compute instances start "+instanceName+" --zone="+zone);
+        ps.start();
         System.out.println("Started...");
     }
 
     private void turnOff() throws Exception {
-        Runtime runtime = Runtime.getRuntime();
-        Process process = runtime.exec("gcloud compute instances stop "+instanceName+" --zone="+zone);
-        process.waitFor();
+        ProcessBuilder ps = new ProcessBuilder("gcloud compute instances stop "+instanceName+" --zone="+zone);
+        ps.start();
         System.out.println("Stopped...");
     }
 
-    public static boolean ping(String URLName){
+    public boolean ping() {
+        ProcessBuilder ps = new ProcessBuilder("gcloud compute instances describe "+instanceName+" --zone="+zone+" | grep status");
         try {
-            HttpURLConnection.setFollowRedirects(false);
-            // note : you may also need
-            //        HttpURLConnection.setInstanceFollowRedirects(false)
-            HttpURLConnection con =
-                    (HttpURLConnection) new URL(URLName).openConnection();
-            con.setInstanceFollowRedirects(false);
-            con.setRequestMethod("HEAD");
-            return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+            Process process = ps.start();
+            InputStream is = process.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader processOutput = new BufferedReader(isr);
+
+            String output;
+            while ((output = processOutput.readLine()) != null) {
+                System.out.println("Result of gcloud compute instances describe: " + output);
+                if (output.contains("RUNNING") || output.contains("STAGING") || output.contains("PROVISIONING")) {
+                    processOutput.close();
+                    return true;
+                }
+            }
+
+            processOutput.close();
+        } catch(Exception e) {
+            e.printStackTrace();
         }
-        catch (Exception e) {
-            return false;
-        }
+        return false;
     }
 }
