@@ -61,20 +61,20 @@ public class Server {
             boolean shouldBeOn = shouldBeOn();
             if((System.currentTimeMillis()-lastCheckedTime) < MONITOR_PERIOD_MILLIS) {
                 if(shouldBeOn) {
-                    return platformStarting();
+                    return platformStarting().render();
                 } else {
-                    return platformNotStarting();
+                    return platformNotStarting().render();
                 }
             }
             lastCheckedTime = System.currentTimeMillis();
-
-            if(!shouldBeOn) {
-                turnOffTask.run();
-                return platformNotStarting();
-            }
             timer.cancel();
             timer = new Timer();
-            turnOnTask.run();
+            if(!shouldBeOn) {
+                timer.schedule(turnOffTask,0, MONITOR_PERIOD_MILLIS);
+                return platformNotStarting().render();
+            }
+
+            timer.schedule(turnOnTask, 0);
             timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, MONITOR_PERIOD_MILLIS);
             return platformStarting().render();
         });
