@@ -4,7 +4,6 @@ import j2html.tags.ContainerTag;
 
 import java.time.*;
 import java.util.Timer;
-import java.util.concurrent.atomic.AtomicBoolean;
 import static spark.Spark.*;
 import static j2html.TagCreator.*;
 
@@ -59,28 +58,28 @@ public class Server {
 
         get("/ping", (req,res)->{
             System.out.println("Got a ping from the AI Platform!");
-            timer.cancel();
-            timer = new Timer();
+            if(shouldBeOn()) {
+                timer.cancel();
+                timer = new Timer();
+            }
+            // add more time till shutoff
             timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, MONITOR_PERIOD_MILLIS);
             return null;
         });
 
         get("/", (req,res)->{
             boolean shouldBeOn = shouldBeOn();
-            if((System.currentTimeMillis()-lastCheckedTime) < MONITOR_PERIOD_MILLIS) {
-                if(shouldBeOn) {
-                    return platformStarting().render();
-                } else {
-                    return platformNotStarting().render();
-                }
+            if(!shouldBeOn) {
+                return platformNotStarting().render();
             }
+
+            if((System.currentTimeMillis()-lastCheckedTime) < MONITOR_PERIOD_MILLIS) {
+                return platformStarting().render();
+            }
+
             lastCheckedTime = System.currentTimeMillis();
             timer.cancel();
             timer = new Timer();
-            if(!shouldBeOn) {
-                timer.schedule(turnOffTask,0, MONITOR_PERIOD_MILLIS);
-                return platformNotStarting().render();
-            }
 
             timer.schedule(turnOnTask, 0);
             timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, MONITOR_PERIOD_MILLIS);
