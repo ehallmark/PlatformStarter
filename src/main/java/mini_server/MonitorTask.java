@@ -13,16 +13,17 @@ public class MonitorTask extends TimerTask {
     private String url;
     private String instanceName;
     private String zone;
-    public MonitorTask(String url, String instanceName, String zone) {
+    private boolean turnOn;
+    public MonitorTask(String url, String instanceName, String zone, boolean turnOn) {
         this.url = url;
         this.instanceName=instanceName;
         this.zone=zone;
+        this.turnOn = turnOn;
     }
 
     @Override
     public void run() {
         System.out.println("Monitoring...");
-        boolean turnOn = Server.shouldBeOn();
         if (turnOn) {
             // check if already on
             System.out.println("Checking if already on...");

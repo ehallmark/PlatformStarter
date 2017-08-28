@@ -1,9 +1,12 @@
 package mini_server;
 
+import j2html.tags.ContainerTag;
+
 import java.time.*;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import static spark.Spark.*;
+import static j2html.TagCreator.*;
 
 /**
  * Created by ehallmark on 8/1/17.
@@ -12,20 +15,21 @@ public class Server {
     private static final String DEFAULT_URL = "http://35.196.70.117";
     private static final String DEFAULT_ZONE = "us-east1-c";
     private static final String DEFAULT_INSTANCE_NAME = "instance-5";
+    private static long lastCheckedTime = 0;
+    private static final MonitorTask turnOffTask;
+    private static final MonitorTask turnOnTask;
+    private static final long MONITOR_PERIOD_MILLIS = 10 * 60 * 1000;
+    private static final long TIME_UNTIL_SHUTDOWN_MILLIS = 50 * 60 * 1000;
 
-    private static final MonitorTask monitorTask;
-    private static final Timer timer;
+    private static Timer timer;
     static {
         timer = new Timer();
-        // monitor
-        monitorTask = new MonitorTask(DEFAULT_URL, DEFAULT_INSTANCE_NAME, DEFAULT_ZONE);
+        // monitors
+        turnOnTask = new MonitorTask(DEFAULT_URL, DEFAULT_INSTANCE_NAME, DEFAULT_ZONE, true);
+        turnOffTask = new MonitorTask(DEFAULT_URL, DEFAULT_INSTANCE_NAME, DEFAULT_ZONE, false);
     }
     public static void main(String[] args) {
-        final long monitorPeriod = 10 * 60 * 1000; // a few minutes
-        //timer.schedule(monitorTask,0,monitorPeriod);
-
         server();
-
     }
 
 
@@ -39,7 +43,7 @@ public class Server {
             System.out.println("  Don't run on weekends...");
             return false;
         }
-        if(now.getHour() < 9+zoneOffset || now.getHour() > 16+zoneOffset) {
+        if(now.getHour() < 7+zoneOffset || now.getHour() > 17+zoneOffset) {
             // non business hours
             System.out.println("  Outside of business hours...");
             return false;
@@ -54,7 +58,38 @@ public class Server {
         port(8080);
 
         get("/", (req,res)->{
-           return "Hello World!";
+            boolean shouldBeOn = shouldBeOn();
+            if((System.currentTimeMillis()-lastCheckedTime) < MONITOR_PERIOD_MILLIS) {
+                if(shouldBeOn) {
+                    return platformStarting();
+                } else {
+                    return platformNotStarting();
+                }
+            }
+            lastCheckedTime = System.currentTimeMillis();
+
+            if(!shouldBeOn) {
+                turnOffTask.run();
+                return platformNotStarting();
+            }
+            timer.cancel();
+            timer = new Timer();
+            turnOnTask.run();
+            timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, MONITOR_PERIOD_MILLIS);
+            return platformStarting().render();
         });
+    }
+
+    private static ContainerTag platformStarting() {
+        return div().with(
+                h4("Platform is starting up now..."),
+                h5("Please check back in a few minutes.")
+        );
+    }
+
+    private static ContainerTag platformNotStarting() {
+        return div().with(
+                h4("Please check back during business hours.")
+        );
     }
 }
