@@ -57,6 +57,14 @@ public class Server {
     private static void server() {
         port(8080);
 
+        get("/ping", (req,res)->{
+            System.out.println("Got a ping from the AI Platform!");
+            timer.cancel();
+            timer = new Timer();
+            timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, MONITOR_PERIOD_MILLIS);
+            return null;
+        });
+
         get("/", (req,res)->{
             boolean shouldBeOn = shouldBeOn();
             if((System.currentTimeMillis()-lastCheckedTime) < MONITOR_PERIOD_MILLIS) {
