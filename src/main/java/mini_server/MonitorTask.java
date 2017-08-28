@@ -56,19 +56,19 @@ public class MonitorTask extends TimerTask {
     }
 
     private void turnOn() throws Exception {
-        ProcessBuilder ps = new ProcessBuilder("gcloud compute instances start "+instanceName+" --zone="+zone);
+        ProcessBuilder ps = new ProcessBuilder("/bin/bash", "-c", "gcloud compute instances start "+instanceName+" --zone="+zone);
         ps.start();
         System.out.println("Started...");
     }
 
     private void turnOff() throws Exception {
-        ProcessBuilder ps = new ProcessBuilder("gcloud compute instances stop "+instanceName+" --zone="+zone);
+        ProcessBuilder ps = new ProcessBuilder("/bin/bash", "-c","gcloud compute instances stop "+instanceName+" --zone="+zone);
         ps.start();
         System.out.println("Stopped...");
     }
 
     public boolean ping() {
-        ProcessBuilder ps = new ProcessBuilder("gcloud compute instances describe "+instanceName+" --zone="+zone+" | grep status");
+        ProcessBuilder ps = new ProcessBuilder("/bin/bash", "-c", "gcloud compute instances describe "+instanceName+" --zone="+zone+" | grep status");
         try {
             Process process = ps.start();
             InputStream is = process.getInputStream();
