@@ -19,8 +19,8 @@ public class Server {
     private static long lastCheckedTime = 0;
     private static final MonitorTask turnOffTask;
     private static final MonitorTask turnOnTask;
-    private static final long MONITOR_PERIOD_MILLIS = 10 * 60 * 1000;
-    private static final long TIME_UNTIL_SHUTDOWN_MILLIS = 15 * 60 * 1000;
+    private static final long MONITOR_PERIOD_MILLIS = 5 * 60 * 1000;
+    private static final long TIME_UNTIL_SHUTDOWN_MILLIS = 40 * 60 * 1000;
     private static Future<?> turnOffFuture;
 
     private static ScheduledExecutorService timer;
