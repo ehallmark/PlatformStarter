@@ -67,7 +67,7 @@ public class Server {
             return null;
         });
 
-        get("/", (req,res)->{
+        post("/", (req,res)->{
             boolean shouldBeOn = shouldBeOn();
             if(!shouldBeOn) {
                 return platformNotStarting().render();
@@ -84,6 +84,15 @@ public class Server {
             timer.schedule(turnOnTask, 0);
             timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, MONITOR_PERIOD_MILLIS);
             return platformStarting().render();
+        });
+
+        get("/", (req,res)->{
+            return div().with(
+                    form().withAction("/").withMethod("POST").with(
+                            h5("AI Platform is off."),
+                            button("Click to start AI Platform").withType("submit")
+                    )
+            );
         });
     }
 
