@@ -18,7 +18,7 @@ public class Server {
     private static final MonitorTask turnOffTask;
     private static final MonitorTask turnOnTask;
     private static final long MONITOR_PERIOD_MILLIS = 10 * 60 * 1000;
-    private static final long TIME_UNTIL_SHUTDOWN_MILLIS = 45 * 60 * 1000;
+    private static final long TIME_UNTIL_SHUTDOWN_MILLIS = 30 * 60 * 1000;
 
     private static Timer timer;
     static {
@@ -60,10 +60,10 @@ public class Server {
             System.out.println("Got a ping from the AI Platform!");
             if(shouldBeOn()) {
                 timer.cancel();
-                timer = new Timer();
+                timer.purge();
             }
             // add more time till shutoff
-            timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, MONITOR_PERIOD_MILLIS);
+            timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS);
             return null;
         });
 
@@ -79,10 +79,10 @@ public class Server {
 
             lastCheckedTime = System.currentTimeMillis();
             timer.cancel();
-            timer = new Timer();
+            timer.purge();
 
             timer.schedule(turnOnTask, 0);
-            timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, MONITOR_PERIOD_MILLIS);
+            timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS);
             return platformStarting().render();
         });
 
