@@ -65,6 +65,7 @@ public class Server {
                 if(turnOffFuture != null) {
                     System.out.println("Canceling future...");
                     turnOffFuture.cancel(true);
+                    turnOffFuture = null;
                 }
             }
             // add more time till shutoff
@@ -86,10 +87,11 @@ public class Server {
             if(turnOffFuture != null) {
                 System.out.println("Canceling future...");
                 turnOffFuture.cancel(true);
+                turnOffFuture = null;
             }
 
             timer.schedule(turnOnTask, 0, TimeUnit.MILLISECONDS);
-            timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, TimeUnit.MILLISECONDS);
+            turnOffFuture = timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, TimeUnit.MILLISECONDS);
             return platformStarting().render();
         });
 
