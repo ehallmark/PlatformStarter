@@ -86,6 +86,8 @@ public class Server {
             return platformStarting().render();
         });
 
+        redirect.get("/secure/home","/");
+
         get("/", (req,res)->{
             return div().with(
                     form().withAction("/").withMethod("POST").with(
