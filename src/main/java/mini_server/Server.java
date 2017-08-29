@@ -4,6 +4,8 @@ import j2html.tags.ContainerTag;
 
 import java.time.*;
 import java.util.Timer;
+import java.util.concurrent.*;
+
 import static spark.Spark.*;
 import static j2html.TagCreator.*;
 
@@ -18,11 +20,12 @@ public class Server {
     private static final MonitorTask turnOffTask;
     private static final MonitorTask turnOnTask;
     private static final long MONITOR_PERIOD_MILLIS = 10 * 60 * 1000;
-    private static final long TIME_UNTIL_SHUTDOWN_MILLIS = 30 * 60 * 1000;
+    private static final long TIME_UNTIL_SHUTDOWN_MILLIS = 15 * 60 * 1000;
+    private static Future<?> turnOffFuture;
 
-    private static Timer timer;
+    private static ScheduledExecutorService timer;
     static {
-        timer = new Timer();
+        timer = Executors.newSingleThreadScheduledExecutor();
         // monitors
         turnOnTask = new MonitorTask(DEFAULT_URL, DEFAULT_INSTANCE_NAME, DEFAULT_ZONE, true);
         turnOffTask = new MonitorTask(DEFAULT_URL, DEFAULT_INSTANCE_NAME, DEFAULT_ZONE, false);
@@ -59,12 +62,13 @@ public class Server {
         get("/ping", (req,res)->{
             System.out.println("Got a ping from the AI Platform!");
             if(shouldBeOn()) {
-                timer.cancel();
-                timer.purge();
-                timer = new Timer();
+                if(turnOffFuture != null) {
+                    System.out.println("Canceling future...");
+                    turnOffFuture.cancel(true);
+                }
             }
             // add more time till shutoff
-            timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS);
+            turnOffFuture = timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, TimeUnit.MILLISECONDS);
             return null;
         });
 
@@ -79,12 +83,13 @@ public class Server {
             }
 
             lastCheckedTime = System.currentTimeMillis();
-            timer.cancel();
-            timer.purge();
-            timer = new Timer();
+            if(turnOffFuture != null) {
+                System.out.println("Canceling future...");
+                turnOffFuture.cancel(true);
+            }
 
-            timer.schedule(turnOnTask, 0);
-            timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS);
+            timer.schedule(turnOnTask, 0, TimeUnit.MILLISECONDS);
+            timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, TimeUnit.MILLISECONDS);
             return platformStarting().render();
         });
 
