@@ -61,6 +61,7 @@ public class Server {
             if(shouldBeOn()) {
                 timer.cancel();
                 timer.purge();
+                timer = new Timer();
             }
             // add more time till shutoff
             timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS);
@@ -80,6 +81,7 @@ public class Server {
             lastCheckedTime = System.currentTimeMillis();
             timer.cancel();
             timer.purge();
+            timer = new Timer();
 
             timer.schedule(turnOnTask, 0);
             timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS);
