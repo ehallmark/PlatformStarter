@@ -91,6 +91,14 @@ public class Server {
         redirect.get("/secure/home","/");
 
         get("/", (req,res)->{
+            boolean shouldBeOn = shouldBeOn();
+            if(!shouldBeOn) {
+                return platformNotStarting().render();
+            }
+            if((System.currentTimeMillis()-lastCheckedTime) < MONITOR_PERIOD_MILLIS) {
+                return platformStarting().render();
+            }
+
             return div().with(
                     form().withAction("/").withMethod("POST").with(
                             h5("AI Platform is off."),
