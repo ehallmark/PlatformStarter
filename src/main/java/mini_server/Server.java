@@ -121,7 +121,7 @@ public class Server {
         return html().with(
                 head().with(
                         title("AI Platform Startup"),
-                        meta().attr("http-equiv","refresh").attr("content","30")
+                        meta().attr("http-equiv","refresh").attr("content","10")
                 ),body().with(
                         div().with(
                                 h4("Platform is starting up now..."),
