@@ -118,9 +118,17 @@ public class Server {
     }
 
     private static ContainerTag platformStarting() {
-        return div().with(
-                h4("Platform is starting up now..."),
-                h5("Please check back in a few minutes.")
+        return html().with(
+                head().with(
+                        title("AI Platform Startup"),
+                        meta().attr("http-equiv","refresh").attr("content","30")
+                ),body().with(
+                        div().with(
+                                h4("Platform is starting up now..."),
+                                h5("Please check back in a few minutes.")
+                        )
+                )
+
         );
     }
 
