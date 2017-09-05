@@ -22,6 +22,7 @@ public class Server {
     private static final long MONITOR_PERIOD_MILLIS = 5 * 60 * 1000;
     private static final long TIME_UNTIL_SHUTDOWN_MILLIS = 40 * 60 * 1000;
     private static Future<?> turnOffFuture;
+    private static boolean keepOn = false;
 
     private static ScheduledExecutorService timer;
     static {
@@ -31,6 +32,7 @@ public class Server {
         turnOffTask = new MonitorTask(DEFAULT_URL, DEFAULT_INSTANCE_NAME, DEFAULT_ZONE, false);
     }
     public static void main(String[] args) {
+        if(args.length>0&&args[0].equals("1")) keepOn=true;
         server();
     }
 
@@ -45,7 +47,7 @@ public class Server {
             System.out.println("  Don't run on weekends...");
             return false;
         }
-        if(now.getHour() < 7+zoneOffset || now.getHour() > 17+zoneOffset) {
+        if(now.getHour() < 4+zoneOffset || now.getHour() > 18+zoneOffset) {
             // non business hours
             System.out.println("  Outside of business hours...");
             return false;
@@ -69,7 +71,7 @@ public class Server {
                 }
             }
             // add more time till shutoff
-            turnOffFuture = timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, TimeUnit.MILLISECONDS);
+            if(!keepOn) turnOffFuture = timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, TimeUnit.MILLISECONDS);
             return null;
         });
 
@@ -91,7 +93,7 @@ public class Server {
             }
 
             timer.schedule(turnOnTask, 0, TimeUnit.MILLISECONDS);
-            turnOffFuture = timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, TimeUnit.MILLISECONDS);
+            if(!keepOn) turnOffFuture = timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, TimeUnit.MILLISECONDS);
             return platformStarting().render();
         });
 
