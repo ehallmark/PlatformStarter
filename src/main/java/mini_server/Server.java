@@ -15,7 +15,7 @@ import static j2html.TagCreator.*;
 public class Server {
     private static final String DEFAULT_URL = "http://35.196.70.117";
     private static final String DEFAULT_ZONE = "us-east1-c";
-    private static final String DEFAULT_INSTANCE_NAME = "ai-platform";
+    private static final String DEFAULT_INSTANCE_NAME = "ai-platform-2";
     private static long lastCheckedTime = 0;
     private static final MonitorTask turnOffTask;
     private static final MonitorTask turnOnTask;
