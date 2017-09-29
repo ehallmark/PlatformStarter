@@ -40,22 +40,6 @@ public class Server {
 
 
     public static synchronized boolean shouldBeOn() {
-        int zoneOffset = +0;
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of( "America/Los_Angeles" ));
-        System.out.println("Current time: "+now.toString());
-        System.out.println("    Hour: "+now.getHour());
-        if(now.getDayOfWeek().equals(DayOfWeek.SATURDAY)||now.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-            // weekend
-            System.out.println("  Don't run on weekends...");
-            return false;
-        }
-        if(now.getHour() < 4+zoneOffset || now.getHour() > 18+zoneOffset) {
-            // non business hours
-            System.out.println("  Outside of business hours...");
-            return false;
-        }
-
-        System.out.println("  Turn me on!");
         // should be on!
         return true;
     }
@@ -77,7 +61,7 @@ public class Server {
             return null;
         });
 
-        post("/", (req,res)->{
+        post("/alskdhjgoaiseugiauewlkgjadj32la93klva098432jaegasdiga938", (req,res)->{
             return turnOnAction(req,res);
         });
 
@@ -99,7 +83,7 @@ public class Server {
             return div().with(
                     form().withAction("/").withMethod("POST").with(
                             h5("AI Platform is off."),
-                            button("Click to start AI Platform").withType("submit")
+                            button("Click to start AI Platform").withAction("/alskdhjgoaiseugiauewlkgjadj32la93klva098432jaegasdiga938").withType("submit")
                     )
             );
         });
