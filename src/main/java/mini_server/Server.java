@@ -1,6 +1,8 @@
 package mini_server;
 
 import j2html.tags.ContainerTag;
+import spark.Request;
+import spark.Response;
 
 import java.time.*;
 import java.util.Timer;
@@ -76,25 +78,11 @@ public class Server {
         });
 
         post("/", (req,res)->{
-            boolean shouldBeOn = shouldBeOn();
-            if(!shouldBeOn) {
-                return platformNotStarting().render();
-            }
+            return turnOnAction(req,res);
+        });
 
-            if((System.currentTimeMillis()-lastCheckedTime) < MONITOR_PERIOD_MILLIS) {
-                return platformStarting().render();
-            }
-
-            lastCheckedTime = System.currentTimeMillis();
-            if(turnOffFuture != null) {
-                System.out.println("Canceling future...");
-                turnOffFuture.cancel(true);
-                turnOffFuture = null;
-            }
-
-            timer.schedule(turnOnTask, 0, TimeUnit.MILLISECONDS);
-            if(!keepOn) turnOffFuture = timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, TimeUnit.MILLISECONDS);
-            return platformStarting().render();
+        get("/alskdhjgoaiseugiauewlkgjadj32la93klva098432jaegasdiga938", (req,res)->{
+            return turnOnAction(req,res);
         });
 
         redirect.get("/secure/home","/");
@@ -130,6 +118,28 @@ public class Server {
                 )
 
         );
+    }
+
+    private static Object turnOnAction(Request req, Response res) {
+        boolean shouldBeOn = shouldBeOn();
+        if(!shouldBeOn) {
+            return platformNotStarting().render();
+        }
+
+        if((System.currentTimeMillis()-lastCheckedTime) < MONITOR_PERIOD_MILLIS) {
+            return platformStarting().render();
+        }
+
+        lastCheckedTime = System.currentTimeMillis();
+        if(turnOffFuture != null) {
+            System.out.println("Canceling future...");
+            turnOffFuture.cancel(true);
+            turnOffFuture = null;
+        }
+
+        timer.schedule(turnOnTask, 0, TimeUnit.MILLISECONDS);
+        if(!keepOn) turnOffFuture = timer.schedule(turnOffTask, TIME_UNTIL_SHUTDOWN_MILLIS, TimeUnit.MILLISECONDS);
+        return platformStarting().render();
     }
 
     private static ContainerTag platformNotStarting() {
