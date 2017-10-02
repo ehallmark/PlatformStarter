@@ -62,10 +62,12 @@ public class Server {
         });
 
         post("/alskdhjgoaiseugiauewlkgjadj32la93klva098432jaegasdiga938", (req,res)->{
+            res.redirect("/");
             return turnOnAction(req,res);
         });
 
         get("/alskdhjgoaiseugiauewlkgjadj32la93klva098432jaegasdiga938", (req,res)->{
+            res.redirect("/");
             return turnOnAction(req,res);
         });
 
