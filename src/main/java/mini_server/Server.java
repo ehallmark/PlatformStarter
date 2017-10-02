@@ -81,9 +81,9 @@ public class Server {
             }
 
             return div().with(
-                    form().withAction("/").withMethod("POST").with(
+                    form().withAction("/alskdhjgoaiseugiauewlkgjadj32la93klva098432jaegasdiga938").withMethod("POST").with(
                             h5("AI Platform is off."),
-                            button("Click to start AI Platform").withAction("/alskdhjgoaiseugiauewlkgjadj32la93klva098432jaegasdiga938").withType("submit")
+                            button("Click to start AI Platform").withType("submit")
                     )
             );
         });
