@@ -4,12 +4,14 @@ import j2html.tags.ContainerTag;
 import spark.Request;
 import spark.Response;
 
-import java.time.*;
-import java.util.Timer;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-import static spark.Spark.*;
 import static j2html.TagCreator.*;
+import static j2html.TagCreator.head;
+import static spark.Spark.*;
 
 /**
  * Created by ehallmark on 8/1/17.
@@ -72,6 +74,11 @@ public class Server {
         });
 
         redirect.get("/secure/home","/");
+
+        notFound((req,res)->{
+            res.redirect("/");
+            return null;
+        });
 
         get("/", (req,res)->{
             boolean shouldBeOn = shouldBeOn();
